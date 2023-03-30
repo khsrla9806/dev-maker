@@ -1,22 +1,20 @@
 package com.fastcampus.devmaker.devmaker.service;
 
 import com.fastcampus.devmaker.devmaker.dto.CreateDeveloper;
+import com.fastcampus.devmaker.devmaker.dto.DeveloperDetailDto;
+import com.fastcampus.devmaker.devmaker.dto.DeveloperDto;
 import com.fastcampus.devmaker.devmaker.entity.Developer;
-import com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode;
 import com.fastcampus.devmaker.devmaker.exception.DevMakerException;
 import com.fastcampus.devmaker.devmaker.repository.DeveloperRepository;
 import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.action.internal.CollectionRecreateAction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import java.util.Optional;
-
-import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.DUPLICATED_MEMBER_ID;
-import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.LEVEL_EXPERIENCE_YEARS_NOT_MATCHED;
+import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -64,5 +62,16 @@ public class DevMakerService {
                 .ifPresent((developer) -> {
                     throw new DevMakerException(DUPLICATED_MEMBER_ID);
                 });
+    }
+
+    public List<DeveloperDto> getAllDevelopers() {
+        return developerRepository.findAll()
+                .stream().map(DeveloperDto::fromEntity).collect(Collectors.toList());
+    }
+
+    public DeveloperDetailDto getDeveloper(String memberId) {
+        return developerRepository.findByMemberId(memberId).map(DeveloperDetailDto::fromEntity).orElseThrow(() -> {
+            throw new DevMakerException(NO_DEVELOPER);
+        });
     }
 }
