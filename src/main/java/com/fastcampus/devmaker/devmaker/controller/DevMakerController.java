@@ -18,9 +18,9 @@ public class DevMakerController {
     private final DevMakerService devMakerService;
 
     @PostMapping("/create-developer")
-    public void createDeveloper(@Valid @RequestBody CreateDeveloper.Request request) {
+    public CreateDeveloper.Response createDeveloper(@Valid @RequestBody CreateDeveloper.Request request) {
         log.info("POST: request : {}", request);
 
-        devMakerService.createDeveloper(request);
+        return devMakerService.createDeveloper(request);
     }
 }
