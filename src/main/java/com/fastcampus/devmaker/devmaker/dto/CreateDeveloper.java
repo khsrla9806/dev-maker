@@ -1,5 +1,6 @@
 package com.fastcampus.devmaker.devmaker.dto;
 
+import com.fastcampus.devmaker.devmaker.entity.Developer;
 import com.fastcampus.devmaker.devmaker.type.DevelopSkillType;
 import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
 import lombok.*;
@@ -51,5 +52,14 @@ public class CreateDeveloper {
         private Integer experienceYears;
 
         private String memberId;
+
+        public static Response fromEntity(Developer developer) {
+            return Response.builder()
+                    .developerLevel(developer.getDeveloperLevel())
+                    .developSkillType(developer.getDevelopSkillType())
+                    .experienceYears(developer.getExperienceYears())
+                    .memberId(developer.getMemberId())
+                    .build();
+        }
     }
 }
