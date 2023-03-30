@@ -27,14 +27,14 @@ public class DevMakerController {
     }
 
     @GetMapping("/developers")
-    public List<DeveloperDto> getAllDevelopers() {
+    public List<DeveloperDto> getEmployedDevelopers() {
         log.info("GET: /developers HTTP/1.1");
 
-        return devMakerService.getAllDevelopers();
+        return devMakerService.getEmployedDevelopers();
     }
 
     @GetMapping("/developers/{memberId}")
-    public DeveloperDetailDto getAllDevelopers(@PathVariable String memberId) {
+    public DeveloperDetailDto getDeveloper(@PathVariable String memberId) {
         log.info("GET: /developers/:memberId HTTP/1.1");
         return devMakerService.getDeveloper(memberId);
     }
@@ -44,5 +44,12 @@ public class DevMakerController {
         log.info("PUT: /developer/:memberId HTTP/1.1");
 
         return devMakerService.editDeveloper(memberId, request);
+    }
+
+    @DeleteMapping("/developer/{memberId}")
+    public DeveloperDetailDto deleteDeveloper(@PathVariable String memberId) {
+        log.info("DELETE: /developer/:memberId HTTP/1.1");
+
+        return devMakerService.deleteDeveloper(memberId);
     }
 }
