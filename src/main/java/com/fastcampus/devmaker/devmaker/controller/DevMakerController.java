@@ -52,15 +52,4 @@ public class DevMakerController {
 
         return devMakerService.deleteDeveloper(memberId);
     }
-
-    @ResponseStatus(value = HttpStatus.CONFLICT) // <-- 그에 맞는 Http Status를 넘겨주는 방법
-    @ExceptionHandler(DevMakerException.class) // <-- Controller에서 발생하는 DevMakerException은 모두 여기 메서드에서 처리
-    public DevMakerErrorResponse handelerException(DevMakerException e, HttpServletRequest request) {
-        log.error("errorCode: {}, url {}, message {}", e.getDMakerErrorCode(), request.getRequestURI(), e.getDetailMessage());
-
-        return DevMakerErrorResponse.builder()
-                .errorCode(e.getDMakerErrorCode())
-                .errorMessage(e.getDetailMessage())
-                .build();
-    }
 }
