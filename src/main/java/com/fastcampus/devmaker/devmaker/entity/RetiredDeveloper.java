@@ -1,8 +1,5 @@
 package com.fastcampus.devmaker.devmaker.entity;
 
-import com.fastcampus.devmaker.devmaker.type.DevelopSkillType;
-import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
-import com.fastcampus.devmaker.devmaker.type.StateCode;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
