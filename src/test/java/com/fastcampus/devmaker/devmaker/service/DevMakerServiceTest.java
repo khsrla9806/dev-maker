@@ -127,10 +127,6 @@ class DevMakerServiceTest {
         given(developerRepository.findByMemberId(anyString()))
                 .willReturn(Optional.of(defaultDeveloper));
 
-        // Mockito에서 제공하는 또하나의 기능 : createDeveloper()가 실행되는 과정에서 매개변수로 주어지는 Developer 타입의 데이터를 잡아채게 된다.
-        ArgumentCaptor<Developer> captor = ArgumentCaptor.forClass(Developer.class);
-
-
         // when (test 하고자하는 동작)
         DevMakerException exception = assertThrows(DevMakerException.class,
                 () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest));
