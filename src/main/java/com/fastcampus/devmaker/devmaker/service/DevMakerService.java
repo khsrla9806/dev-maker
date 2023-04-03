@@ -11,6 +11,7 @@ import com.fastcampus.devmaker.devmaker.repository.DeveloperRepository;
 import com.fastcampus.devmaker.devmaker.repository.RetiredDeveloperRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,11 +27,14 @@ import static com.fastcampus.devmaker.devmaker.type.StateCode.RETIRED;
 @Service
 public class DevMakerService {
 
+    @Value("${developer.level.min.senior}") /* SpEL의 원리 (프로젝트마다 다른 설정 값이 필요할 때) */
+    private Integer minSeniorYears;
+
     private final DeveloperRepository developerRepository;
 
     private final RetiredDeveloperRepository retiredDeveloperRepository;
 
-    @Transactional
+    @Transactional /* AOP의 Around 방식을 사용한 어노테이션 = Transactional */
     public CreateDeveloper.Response createDeveloper(CreateDeveloper.Request request) {
         validateCreateDeveloperRequest(request);
 
@@ -51,7 +55,7 @@ public class DevMakerService {
                 .build();
     }
 
-    private void validateCreateDeveloperRequest(@NonNull CreateDeveloper.Request request) { // <-- Lombok의 NonNull을 사용
+    private void validateCreateDeveloperRequest(@NonNull CreateDeveloper.Request request) { /* Null-Safety 관련 내용 */
         request.getDeveloperLevel().validateExperienceYears(request.getExperienceYears());
 
         developerRepository.findByMemberId(request.getMemberId())

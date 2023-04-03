@@ -4,3 +4,8 @@ spring:
       enabled: true
   jpa:
     show-sql: true
+
+developer:
+  level:
+    min:
+      senior: 10

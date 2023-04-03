@@ -17,7 +17,7 @@ import java.util.List;
 @RestController // @Controller + @ResponseBody
 public class DevMakerController {
 
-    private final DevMakerService devMakerService;
+    private final DevMakerService devMakerService; /* Dependency Injection(DI) + Inversion of Control(IoC)의 원리 */
 
     @PostMapping("/create-developer")
     public CreateDeveloper.Response createDeveloper(@Valid @RequestBody final CreateDeveloper.Request request) {
@@ -39,7 +39,7 @@ public class DevMakerController {
         return devMakerService.getDeveloper(memberId);
     }
 
-    @PutMapping("/developer/{memberId}")
+    @PutMapping("/developer/{memberId}") /* validation(@Valid)과 data binding(path parameter) */
     public DeveloperDetailDto editDeveloper(@PathVariable final String memberId, @Valid @RequestBody final EditDeveloper.Request request) {
         log.info("PUT: /developer/:memberId HTTP/1.1");
 
