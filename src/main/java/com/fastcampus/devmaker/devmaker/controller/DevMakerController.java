@@ -40,7 +40,7 @@ public class DevMakerController {
     }
 
     @PutMapping("/developer/{memberId}")
-    public DeveloperDetailDto editDeveloper(@PathVariable String memberId, @Valid @RequestBody final EditDeveloper.Request request) {
+    public DeveloperDetailDto editDeveloper(@PathVariable final String memberId, @Valid @RequestBody final EditDeveloper.Request request) {
         log.info("PUT: /developer/:memberId HTTP/1.1");
 
         return devMakerService.editDeveloper(memberId, request);

@@ -34,7 +34,13 @@ public class DevMakerService {
     public CreateDeveloper.Response createDeveloper(CreateDeveloper.Request request) {
         validateCreateDeveloperRequest(request);
 
-        Developer developer = Developer.builder()
+        return CreateDeveloper.Response.fromEntity(
+                developerRepository.save(createDeveloperFromRequest(request))
+        );
+    }
+
+    private Developer createDeveloperFromRequest(CreateDeveloper.Request request) {
+        return Developer.builder()
                 .developerLevel(request.getDeveloperLevel())
                 .developSkillType(request.getDevelopSkillType())
                 .experienceYears(request.getExperienceYears())
@@ -43,10 +49,6 @@ public class DevMakerService {
                 .memberId(request.getMemberId())
                 .stateCode(EMPLOYED)
                 .build();
-
-        developerRepository.save(developer);
-
-        return CreateDeveloper.Response.fromEntity(developer);
     }
 
     private void validateCreateDeveloperRequest(@NonNull CreateDeveloper.Request request) { // <-- Lombok의 NonNull을 사용
@@ -66,7 +68,11 @@ public class DevMakerService {
 
     @Transactional(readOnly = true)
     public DeveloperDetailDto getDeveloper(String memberId) {
-        return developerRepository.findByMemberId(memberId).map(DeveloperDetailDto::fromEntity).orElseThrow(() -> {
+        return DeveloperDetailDto.fromEntity(getDeveloperByMemberId(memberId));
+    }
+
+    private Developer getDeveloperByMemberId(String memberId) {
+        return developerRepository.findByMemberId(memberId).orElseThrow(() -> {
             throw new DevMakerException(NO_DEVELOPER);
         });
     }
@@ -75,15 +81,16 @@ public class DevMakerService {
     public DeveloperDetailDto editDeveloper(String memberId, EditDeveloper.Request request) {
         validateUpdateDeveloperRequest(request);
 
-        Developer developer = developerRepository.findByMemberId(memberId).orElseThrow(() -> {
-            throw new DevMakerException(NO_DEVELOPER);
-        });
+        return DeveloperDetailDto.fromEntity(
+                getUpdatedDeveloperFromRequest(request, getDeveloperByMemberId(memberId))
+        );
+    }
 
+    private static Developer getUpdatedDeveloperFromRequest(EditDeveloper.Request request, Developer developer) {
         developer.setDeveloperLevel(request.getDeveloperLevel());
         developer.setDevelopSkillType(request.getDevelopSkillType());
         developer.setExperienceYears(request.getExperienceYears());
-
-        return DeveloperDetailDto.fromEntity(developer);
+        return developer;
     }
 
     private void validateUpdateDeveloperRequest(EditDeveloper.Request request) {

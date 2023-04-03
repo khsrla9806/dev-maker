@@ -22,6 +22,7 @@ import static com.fastcampus.devmaker.devmaker.type.DeveloperLevel.JUNIOR;
 import static com.fastcampus.devmaker.devmaker.type.StateCode.EMPLOYED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -38,11 +39,11 @@ class DevMakerServiceTest {
 
     private final Developer defaultDeveloper = Developer.builder() // <-- 반복되어서 사용되는 부분은 이렇게 빼놓는 것이 좋다.
             .developerLevel(JUNIOR)
-            .developSkillType(FRONT_END)
+            .developSkillType(BACK_END)
             .experienceYears(3)
             .stateCode(EMPLOYED)
-            .name("hun")
-            .age(12)
+            .name("김훈섭")
+            .age(26)
             .build();
 
     private final CreateDeveloper.Request defaultCreateDeveloperRequest = CreateDeveloper.Request.builder()
@@ -81,9 +82,13 @@ class DevMakerServiceTest {
     void createDeveloper_success() {
         // given (mock 정의)
 
-        // 필요한 과정에서 mocking 작업을 정의 (검증해야되는 과정은 직접 정의해줘야 한다.)
+        // 기존에 같은 이름을 가진 개발자가 존재하는지 확인하는 로직을 Mocking
         given(developerRepository.findByMemberId(anyString()))
                 .willReturn(Optional.empty());
+
+        // repository.save()를 했을 때, Developer 타입의 객체가 반환되는 로직을 Mocking
+        given(developerRepository.save(any()))
+                .willReturn(defaultDeveloper);
 
         // Mockito에서 제공하는 또하나의 기능 : createDeveloper()가 실행되는 과정에서 매개변수로 주어지는 Developer 타입의 데이터를 잡아채게 된다.
         ArgumentCaptor<Developer> captor = ArgumentCaptor.forClass(Developer.class);
