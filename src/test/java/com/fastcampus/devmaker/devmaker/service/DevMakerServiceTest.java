@@ -2,15 +2,9 @@ package com.fastcampus.devmaker.devmaker.service;
 
 import com.fastcampus.devmaker.devmaker.dto.CreateDeveloper;
 import com.fastcampus.devmaker.devmaker.dto.DeveloperDetailDto;
-import com.fastcampus.devmaker.devmaker.dto.DeveloperDto;
 import com.fastcampus.devmaker.devmaker.entity.Developer;
-import com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode;
 import com.fastcampus.devmaker.devmaker.exception.DevMakerException;
 import com.fastcampus.devmaker.devmaker.repository.DeveloperRepository;
-import com.fastcampus.devmaker.devmaker.repository.RetiredDeveloperRepository;
-import com.fastcampus.devmaker.devmaker.type.DevelopSkillType;
-import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
-import com.fastcampus.devmaker.devmaker.type.StateCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,18 +12,16 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.DUPLICATED_MEMBER_ID;
-import static com.fastcampus.devmaker.devmaker.type.DevelopSkillType.*;
+import static com.fastcampus.devmaker.devmaker.type.DevelopSkillType.BACK_END;
+import static com.fastcampus.devmaker.devmaker.type.DevelopSkillType.FRONT_END;
 import static com.fastcampus.devmaker.devmaker.type.DeveloperLevel.JUNIOR;
-import static com.fastcampus.devmaker.devmaker.type.StateCode.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static com.fastcampus.devmaker.devmaker.type.StateCode.EMPLOYED;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -40,9 +32,6 @@ import static org.mockito.Mockito.verify;
 class DevMakerServiceTest {
     @Mock // <-- DevMakerService가 가지고 있는 의존성을 Mock으로 가져와준다
     DeveloperRepository developerRepository;
-
-    @Mock
-    RetiredDeveloperRepository retiredDeveloperRepository;
 
     @InjectMocks // <-- Mock은 '가짜'라는 뜻, 가짜 devMakerService를 주입해준다.
     private DevMakerService devMakerService;

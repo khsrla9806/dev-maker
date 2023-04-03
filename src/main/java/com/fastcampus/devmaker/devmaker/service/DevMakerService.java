@@ -10,6 +10,7 @@ import com.fastcampus.devmaker.devmaker.exception.DevMakerException;
 import com.fastcampus.devmaker.devmaker.repository.DeveloperRepository;
 import com.fastcampus.devmaker.devmaker.repository.RetiredDeveloperRepository;
 import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ public class DevMakerService {
         return CreateDeveloper.Response.fromEntity(developer);
     }
 
-    private void validateCreateDeveloperRequest(CreateDeveloper.Request request) {
+    private void validateCreateDeveloperRequest(@NonNull CreateDeveloper.Request request) { // <-- Lombok의 NonNull을 사용
         validateDeveloperLevel(request.getExperienceYears(), request.getDeveloperLevel());
 
         developerRepository.findByMemberId(request.getMemberId())
@@ -57,11 +58,13 @@ public class DevMakerService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<DeveloperDto> getEmployedDevelopers() {
         return developerRepository.findDevelopersByStateCodeEquals(EMPLOYED)
                 .stream().map(DeveloperDto::fromEntity).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public DeveloperDetailDto getDeveloper(String memberId) {
         return developerRepository.findByMemberId(memberId).map(DeveloperDetailDto::fromEntity).orElseThrow(() -> {
             throw new DevMakerException(NO_DEVELOPER);
@@ -70,7 +73,7 @@ public class DevMakerService {
 
     @Transactional
     public DeveloperDetailDto editDeveloper(String memberId, EditDeveloper.Request request) {
-        validateUpdateDeveloperRequest(request, memberId);
+        validateUpdateDeveloperRequest(request);
 
         Developer developer = developerRepository.findByMemberId(memberId).orElseThrow(() -> {
             throw new DevMakerException(NO_DEVELOPER);
@@ -83,7 +86,7 @@ public class DevMakerService {
         return DeveloperDetailDto.fromEntity(developer);
     }
 
-    private void validateUpdateDeveloperRequest(EditDeveloper.Request request, String memberId) {
+    private void validateUpdateDeveloperRequest(EditDeveloper.Request request) {
         validateDeveloperLevel(request.getExperienceYears(), request.getDeveloperLevel());
     }
 
