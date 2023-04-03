@@ -27,7 +27,7 @@ public class DevMakerController {
     }
 
     @GetMapping("/developers")
-    public List<DeveloperDto> getEmployedDevelopers() {
+    public List<DeveloperDto> getAllEmployedDevelopers() {
         log.info("GET: /developers HTTP/1.1");
 
         return devMakerService.getEmployedDevelopers();
