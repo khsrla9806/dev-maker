@@ -5,6 +5,8 @@ import com.fastcampus.devmaker.devmaker.dto.DeveloperDetailDto;
 import com.fastcampus.devmaker.devmaker.entity.Developer;
 import com.fastcampus.devmaker.devmaker.exception.DevMakerException;
 import com.fastcampus.devmaker.devmaker.repository.DeveloperRepository;
+import com.fastcampus.devmaker.devmaker.type.DevelopSkillType;
+import com.fastcampus.devmaker.devmaker.type.DeveloperLevel;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,10 +17,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.fastcampus.devmaker.devmaker.constant.DevMakerContant.MAX_JUNIOR_EXPERIENCE_YEARS;
+import static com.fastcampus.devmaker.devmaker.constant.DevMakerContant.MIN_SENIOR_EXPERIENCE_YEARS;
 import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.DUPLICATED_MEMBER_ID;
+import static com.fastcampus.devmaker.devmaker.exception.DMakerErrorCode.LEVEL_EXPERIENCE_YEARS_NOT_MATCHED;
 import static com.fastcampus.devmaker.devmaker.type.DevelopSkillType.BACK_END;
 import static com.fastcampus.devmaker.devmaker.type.DevelopSkillType.FRONT_END;
-import static com.fastcampus.devmaker.devmaker.type.DeveloperLevel.JUNIOR;
+import static com.fastcampus.devmaker.devmaker.type.DeveloperLevel.*;
 import static com.fastcampus.devmaker.devmaker.type.StateCode.EMPLOYED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -46,14 +51,16 @@ class DevMakerServiceTest {
             .age(26)
             .build();
 
-    private final CreateDeveloper.Request defaultCreateDeveloperRequest = CreateDeveloper.Request.builder()
-            .developerLevel(JUNIOR)
-            .developSkillType(BACK_END)
-            .memberId("hunsope")
-            .name("김훈섭")
-            .age(26)
-            .experienceYears(3)
-            .build();
+    private CreateDeveloper.Request defaultCreateDeveloperRequest(DeveloperLevel level, DevelopSkillType skillType, Integer experienceYears) {
+        return CreateDeveloper.Request.builder()
+                .developerLevel(level)
+                .developSkillType(skillType)
+                .memberId("hunsope")
+                .name("김훈섭")
+                .age(26)
+                .experienceYears(experienceYears)
+                .build();
+    }
 
     @Test
     @DisplayName("테스트 연습")
@@ -95,7 +102,7 @@ class DevMakerServiceTest {
 
 
         // when (test 하고자하는 동작)
-        devMakerService.createDeveloper(defaultCreateDeveloperRequest);
+        devMakerService.createDeveloper(defaultCreateDeveloperRequest(JUNIOR, BACK_END, 3));
 
 
         // then (예상한 동작을 검증)
@@ -123,8 +130,32 @@ class DevMakerServiceTest {
 
         // when (test 하고자하는 동작)
         DevMakerException exception = assertThrows(DevMakerException.class,
-                () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest));
+                () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest(JUNIOR, BACK_END, 3)));
 
         assertEquals(DUPLICATED_MEMBER_ID, exception.getDMakerErrorCode());
+    }
+
+    @Test
+    @DisplayName("개발자 생성 실패 - 연차가 적은 시니어")
+    void createDeveloper_fail_low_senior() {
+        // 7년차 개발자가 시니어로 등록되면 예외를 발생시킨다.
+        // 실패나 성공하는 테스트를 할때는 경계값을 사용하자.
+        DevMakerException seniorException = assertThrows(DevMakerException.class,
+                () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest(SENIOR, FRONT_END, MIN_SENIOR_EXPERIENCE_YEARS - 1)));
+
+        // 예외 코드가 동일한지 확인
+        assertEquals(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED, seniorException.getDMakerErrorCode());
+
+        // 주니어 테스트
+        DevMakerException juniorException = assertThrows(DevMakerException.class,
+                () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest(JUNIOR, FRONT_END, MAX_JUNIOR_EXPERIENCE_YEARS + 1)));
+
+        assertEquals(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED, juniorException.getDMakerErrorCode());
+
+        // 중니어 테스트
+        DevMakerException jungniorException = assertThrows(DevMakerException.class,
+                () -> devMakerService.createDeveloper(defaultCreateDeveloperRequest(JUNGNIOR, FRONT_END, MIN_SENIOR_EXPERIENCE_YEARS + 1)));
+
+        assertEquals(LEVEL_EXPERIENCE_YEARS_NOT_MATCHED, jungniorException.getDMakerErrorCode());
     }
 }
